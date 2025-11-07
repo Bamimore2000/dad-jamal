@@ -1,7 +1,7 @@
 "use server";
 
 import sgMail from "@sendgrid/mail";
-import prisma from "./lib/prisma";
+import { prisma } from "./lib/prisma";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 interface LoginInput {
