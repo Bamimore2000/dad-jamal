@@ -1,111 +1,116 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { AlertCircle, CheckCircle2 } from "lucide-react"
+import type React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Image from "next/image";
+import { loginAction } from "@/actions";
+import { toast } from "sonner";
+import Link from "next/link";
 
 interface LoginPageProps {
-  onLogin: () => void
-  onNavigateTo2FA: () => void
+  onLogin: () => void;
+  onNavigateTo2FA: () => void; // redirect to 2FA step
 }
 
-export default function LoginPage({ onLogin, onNavigateTo2FA }: LoginPageProps) {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [isVerifying, setIsVerifying] = useState(false)
+export default function LoginPage({
+  onLogin,
+  onNavigateTo2FA,
+}: LoginPageProps) {
+  const [identifier, setIdentifier] = useState(""); // email or phone
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
 
-    if (!email || !password) {
-      setError("Please enter both email/phone and password")
-      return
+    if (!identifier || !password) {
+      toast.error("Please enter both email/phone and password");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false)
-      setIsVerifying(true)
+    try {
+      const res = await loginAction({ identifier, password });
+
+      if (!res.success) {
+        toast.error(res.message || "Invalid credentials");
+        setIsLoading(false);
+        return;
+      }
+
+      // Store OTP in localStorage
+      localStorage.setItem("otp", res.otp!);
+      localStorage.setItem("identifier", identifier); // optional, to remember which user
+
+      toast.success("Login successful! OTP sent to your email.");
+
+      // Redirect to 2FA page or open 2FA modal
       setTimeout(() => {
-        onNavigateTo2FA()
-      }, 800)
-    }, 1200)
-  }
-
-  if (isVerifying) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md border-0 shadow-lg">
-          <CardContent className="pt-12 pb-12 flex flex-col items-center text-center">
-            <div className="mb-4 p-3 bg-accent/10 rounded-full animate-pulse">
-              <CheckCircle2 className="w-10 h-10 text-accent" />
-            </div>
-            <h2 className="text-xl font-bold text-foreground mb-1">Sign In Successful</h2>
-            <p className="text-muted-foreground text-sm">Verifying your account...</p>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+        onNavigateTo2FA();
+      }, 500);
+    } catch (err) {
+      toast.error("Something went wrong");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary mb-4">
-            <span className="text-primary-foreground font-bold text-lg">F</span>
+          <div className="inline-flex items-center justify-center w-full h-auto rounded-lg bg-white mb-4">
+            <Image
+              width={400}
+              height={100}
+              alt="Pinnacle Bank Logo"
+              src="/pinnacle.png"
+            />
           </div>
-          <h1 className="text-3xl font-bold text-foreground">FinanceHub</h1>
+
           <p className="text-muted-foreground mt-1">Secure Banking Platform</p>
         </div>
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl">Welcome Back</CardTitle>
-            <CardDescription>Sign in to your account to continue</CardDescription>
+            <CardDescription>
+              Sign in to your account to continue
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
-                  <p className="text-sm text-destructive">{error}</p>
-                </div>
-              )}
-
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium">
+                <Label htmlFor="identifier" className="text-sm font-medium">
                   Email or Phone Number
                 </Label>
                 <Input
-                  id="email"
+                  id="identifier"
                   type="text"
-                  placeholder="user@example.com or +1 (555) 000-0000"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email or phone number"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   className="h-10"
                   disabled={isLoading}
                 />
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-sm font-medium">
-                    Password
-                  </Label>
-                  <button type="button" className="text-xs text-accent hover:underline">
-                    Forgot?
-                  </button>
-                </div>
+                <Label htmlFor="password" className="text-sm font-medium">
+                  Password
+                </Label>
                 <Input
                   id="password"
                   type="password"
@@ -126,35 +131,22 @@ export default function LoginPage({ onLogin, onNavigateTo2FA }: LoginPageProps) 
               </Button>
             </form>
 
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="px-2 bg-card text-muted-foreground">Demo Credentials</span>
-              </div>
-            </div>
-
-            <div className="space-y-2 text-xs text-muted-foreground bg-muted p-3 rounded-lg">
-              <p>
-                <strong>Email/Phone:</strong> user@example.com
-              </p>
-              <p>
-                <strong>Password:</strong> (any password)
-              </p>
-              <p>
-                <strong>2FA Code:</strong> 123456
-              </p>
-            </div>
-
             <p className="text-xs text-muted-foreground text-center mt-4">
-              Don't have an account? <button className="text-accent hover:underline font-medium">Sign up here</button>
+              Forgot password?{" "}
+              <Link
+                href={"/reset"}
+                className="text-accent hover:underline font-medium"
+              >
+                Reset here
+              </Link>
             </p>
           </CardContent>
         </Card>
 
-        <p className="text-xs text-muted-foreground text-center mt-4">© 2025 FinanceHub. All rights reserved.</p>
+        <p className="text-xs text-muted-foreground text-center mt-4">
+          © 2025 Pinnacle Bank. All rights reserved.
+        </p>
       </div>
     </div>
-  )
+  );
 }

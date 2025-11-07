@@ -1,56 +1,75 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { ArrowLeft, CheckCircle2, Lock } from "lucide-react"
+import type React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, CheckCircle2, Lock } from "lucide-react";
 
 interface TwoFAPageProps {
-  onBack: () => void
-  onVerify: () => void
+  onBack: () => void;
+  onVerify: () => void; // called after successful verification
 }
 
 export default function TwoFAPage({ onBack, onVerify }: TwoFAPageProps) {
-  const [codes, setCodes] = useState(["", "", "", "", "", ""])
-  const [isVerified, setIsVerified] = useState(false)
-  const [error, setError] = useState("")
+  const [codes, setCodes] = useState(["", "", "", "", "", ""]);
+  const [isVerified, setIsVerified] = useState(false);
+  const [error, setError] = useState("");
 
   const handleCodeChange = (index: number, value: string) => {
-    if (value.length > 1) return
+    if (value.length > 1) return;
 
-    const newCodes = [...codes]
-    newCodes[index] = value
-
-    setCodes(newCodes)
+    const newCodes = [...codes];
+    newCodes[index] = value;
+    setCodes(newCodes);
 
     if (value && index < 5) {
-      const nextInput = document.getElementById(`code-${index + 1}`)
-      nextInput?.focus()
+      const nextInput = document.getElementById(`code-${index + 1}`);
+      nextInput?.focus();
     }
-  }
+  };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
     if (e.key === "Backspace" && !codes[index] && index > 0) {
-      const prevInput = document.getElementById(`code-${index - 1}`)
-      prevInput?.focus()
+      const prevInput = document.getElementById(`code-${index - 1}`);
+      prevInput?.focus();
     }
-  }
+  };
 
   const handleVerify = () => {
-    const fullCode = codes.join("")
+    const fullCode = codes.join("");
+
     if (fullCode.length !== 6) {
-      setError("Please enter all 6 digits")
-      return
+      setError("Please enter all 6 digits");
+      return;
     }
 
-    setIsVerified(true)
+    const storedOtp = localStorage.getItem("otp");
+    if (fullCode !== storedOtp) {
+      setError("Invalid code. Please try again.");
+      return;
+    }
+
+    // OTP is correct
+    setError("");
+    setIsVerified(true);
+
     setTimeout(() => {
-      onVerify()
-    }, 1500)
-  }
+      // Clear OTP from localStorage
+      localStorage.removeItem("otp");
+      onVerify();
+    }, 1000);
+  };
 
   if (isVerified) {
     return (
@@ -60,12 +79,16 @@ export default function TwoFAPage({ onBack, onVerify }: TwoFAPageProps) {
             <div className="mb-4 p-3 bg-green-100 rounded-full">
               <CheckCircle2 className="w-10 h-10 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Verified</h2>
-            <p className="text-muted-foreground text-sm">You're being authenticated...</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Verified
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              You're being authenticated...
+            </p>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -86,19 +109,25 @@ export default function TwoFAPage({ onBack, onVerify }: TwoFAPageProps) {
                 <Lock className="w-5 h-5 text-accent" />
               </div>
             </div>
-            <CardTitle className="text-2xl">Two-Factor Authentication</CardTitle>
-            <CardDescription>Enter the 6-digit code from your authenticator app</CardDescription>
+            <CardTitle className="text-2xl">
+              Two-Factor Authentication
+            </CardTitle>
+            <CardDescription>
+              Enter the 6-digit code sent to your email
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form
               onSubmit={(e) => {
-                e.preventDefault()
-                handleVerify()
+                e.preventDefault();
+                handleVerify();
               }}
               className="space-y-6"
             >
               {error && (
-                <p className="text-sm text-destructive text-center bg-destructive/10 p-3 rounded-lg">{error}</p>
+                <p className="text-sm text-destructive text-center bg-destructive/10 p-3 rounded-lg">
+                  {error}
+                </p>
               )}
 
               <div className="flex gap-2 justify-center">
@@ -117,21 +146,23 @@ export default function TwoFAPage({ onBack, onVerify }: TwoFAPageProps) {
                 ))}
               </div>
 
-              <Button onClick={handleVerify} className="w-full h-11 bg-primary hover:bg-primary/90 font-medium">
+              <Button
+                onClick={handleVerify}
+                className="w-full h-11 bg-primary hover:bg-primary/90 font-medium"
+              >
                 Verify Code
               </Button>
             </form>
 
             <p className="text-xs text-muted-foreground text-center mt-4">
-              Didn't receive the code? <button className="text-accent hover:underline font-medium">Resend</button>
+              Didn't receive the code?{" "}
+              <button className="text-accent hover:underline font-medium">
+                Resend
+              </button>
             </p>
           </CardContent>
         </Card>
-
-        <p className="text-xs text-muted-foreground text-center mt-4">
-          Demo Code: <span className="font-mono font-bold">123456</span>
-        </p>
       </div>
     </div>
-  )
+  );
 }

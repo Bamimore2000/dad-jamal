@@ -1,16 +1,24 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { TrendingUp, ArrowLeft, LogOut, CheckCircle } from "lucide-react"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { TrendingUp, ArrowLeft, LogOut, CheckCircle } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface InvestPageProps {
-  onLogout: () => void
-  onNavigate: (page: "home" | "transfers" | "invest" | "analytics") => void
+  onLogout: () => void;
+  onNavigate: (page: "home" | "transfers" | "invest" | "analytics") => void;
 }
 
 const portfolioData = [
@@ -21,64 +29,92 @@ const portfolioData = [
   { month: "May", value: 12100 },
   { month: "Jun", value: 13200 },
   { month: "Jul", value: 13900 },
-]
+  { month: "Aug", value: 14500 },
+  { month: "Sep", value: 15150 },
+  { month: "Oct", value: 16000 },
+  { month: "Nov", value: 16750 },
+  { month: "Dec", value: 17500 },
+];
 
 const investments = [
   {
     id: 1,
     name: "Tech Growth Fund",
     symbol: "TGF",
-    shares: 25,
+    shares: 50,
     pricePerShare: 152.4,
-    percentage: 35,
+    percentage: 30,
     color: "#3b82f6",
   },
   {
     id: 2,
     name: "Index 500",
     symbol: "IDX",
-    shares: 40,
+    shares: 80,
     pricePerShare: 145.8,
-    percentage: 30,
+    percentage: 25,
     color: "#10b981",
   },
   {
     id: 3,
     name: "Global Dividend",
     symbol: "GDV",
-    shares: 60,
+    shares: 120,
     pricePerShare: 68.2,
-    percentage: 25,
+    percentage: 20,
     color: "#f59e0b",
   },
   {
     id: 4,
     name: "Bond Portfolio",
     symbol: "BND",
-    shares: 100,
+    shares: 200,
     pricePerShare: 34.5,
     percentage: 10,
     color: "#8b5cf6",
   },
-]
+  {
+    id: 5,
+    name: "Real Estate Trust",
+    symbol: "RET",
+    shares: 30,
+    pricePerShare: 210.5,
+    percentage: 10,
+    color: "#ec4899",
+  },
+  {
+    id: 6,
+    name: "Emerging Markets Fund",
+    symbol: "EMF",
+    shares: 60,
+    pricePerShare: 95.3,
+    percentage: 5,
+    color: "#f87171",
+  },
+];
 
 export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
-  const [amount, setAmount] = useState("")
-  const [selectedInvestment, setSelectedInvestment] = useState<(typeof investments)[0] | null>(null)
-  const [showSuccess, setShowSuccess] = useState(false)
+  const [amount, setAmount] = useState("");
+  const [selectedInvestment, setSelectedInvestment] = useState<
+    (typeof investments)[0] | null
+  >(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleInvest = () => {
     if (amount && selectedInvestment) {
-      setShowSuccess(true)
-      setTimeout(() => setShowSuccess(false), 3000)
-      setAmount("")
-      setSelectedInvestment(null)
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+      setAmount("");
+      setSelectedInvestment(null);
     }
-  }
+  };
 
-  const totalPortfolioValue = investments.reduce((sum, inv) => sum + inv.shares * inv.pricePerShare, 0)
-  const gainAmount = 3250
-  const gainPercentage = 32.5
+  const totalPortfolioValue = investments.reduce(
+    (sum, inv) => sum + inv.shares * inv.pricePerShare,
+    0
+  );
+  const gainAmount = 3250;
+  const gainPercentage = 32.5;
 
   return (
     <div className="min-h-screen bg-background pb-32">
@@ -86,15 +122,24 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
       <header className="bg-card border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={() => onNavigate("home")} className="p-2 hover:bg-muted rounded-lg transition-colors">
+            <button
+              onClick={() => onNavigate("home")}
+              className="p-2 hover:bg-muted rounded-lg transition-colors"
+            >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
               <h1 className="text-xl font-bold text-foreground">Investments</h1>
-              <p className="text-xs text-muted-foreground">Manage your portfolio</p>
+              <p className="text-xs text-muted-foreground">
+                Manage your portfolio
+              </p>
             </div>
           </div>
-          <Button onClick={onLogout} variant="outline" className="h-10 text-sm bg-transparent">
+          <Button
+            onClick={onLogout}
+            variant="outline"
+            className="h-10 text-sm bg-transparent"
+          >
             <LogOut className="w-4 h-4 mr-2" />
             Sign Out
           </Button>
@@ -109,7 +154,9 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
             <CardContent className="pt-4 pb-4 flex items-center gap-3">
               <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
               <div>
-                <p className="font-semibold text-green-900 text-sm">Investment Added Successfully</p>
+                <p className="font-semibold text-green-900 text-sm">
+                  Investment Added Successfully
+                </p>
                 <p className="text-xs text-green-800">
                   ${amount} invested in {selectedInvestment?.name}
                 </p>
@@ -125,8 +172,12 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Total Portfolio Value</p>
-              <p className="text-3xl font-bold text-foreground">${totalPortfolioValue.toFixed(2)}</p>
+              <p className="text-sm text-muted-foreground mb-1">
+                Total Portfolio Value
+              </p>
+              <p className="text-3xl font-bold text-foreground">
+                ${(50000 + totalPortfolioValue).toFixed(2)}
+              </p>
               <div className="flex items-center gap-2 mt-2">
                 <TrendingUp className="w-4 h-4 text-green-600" />
                 <span className="text-sm font-semibold text-green-600">
@@ -138,7 +189,10 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
             {/* Chart */}
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={portfolioData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="var(--color-border)"
+                />
                 <XAxis dataKey="month" stroke="var(--color-muted-foreground)" />
                 <YAxis stroke="var(--color-muted-foreground)" />
                 <Tooltip
@@ -169,8 +223,12 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
             {investments.map((investment) => (
               <div key={investment.id}>
                 <div className="flex items-center justify-between mb-2">
-                  <p className="font-semibold text-sm text-foreground">{investment.name}</p>
-                  <p className="text-sm font-bold text-foreground">{investment.percentage}%</p>
+                  <p className="font-semibold text-sm text-foreground">
+                    {investment.name}
+                  </p>
+                  <p className="text-sm font-bold text-foreground">
+                    {investment.percentage}%
+                  </p>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2">
                   <div
@@ -182,7 +240,8 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {investment.shares} shares @ ${investment.pricePerShare.toFixed(2)}
+                  {investment.shares} shares @ $
+                  {investment.pricePerShare.toFixed(2)}
                 </p>
               </div>
             ))}
@@ -198,7 +257,9 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
             <div className="space-y-2">
               <Label className="text-sm font-medium">Investment Amount</Label>
               <div className="relative">
-                <span className="absolute left-4 top-3 text-foreground font-semibold">$</span>
+                <span className="absolute left-4 top-3 text-foreground font-semibold">
+                  $
+                </span>
                 <Input
                   type="number"
                   placeholder="0.00"
@@ -230,8 +291,12 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
                         {investment.symbol.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-foreground">{investment.name}</p>
-                        <p className="text-xs text-muted-foreground">{investment.symbol}</p>
+                        <p className="font-semibold text-sm text-foreground">
+                          {investment.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {investment.symbol}
+                        </p>
                       </div>
                     </div>
                   </button>
@@ -258,7 +323,12 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
             onClick={() => onNavigate("home")}
             className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -272,8 +342,18 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
             onClick={() => onNavigate("transfers")}
             className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              />
             </svg>
             <span className="text-xs font-medium">Transfers</span>
           </button>
@@ -285,13 +365,23 @@ export default function InvestPage({ onLogout, onNavigate }: InvestPageProps) {
             onClick={() => onNavigate("analytics")}
             className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7H5v12h8V7zM13 3h6v4h-6V3z" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7H5v12h8V7zM13 3h6v4h-6V3z"
+              />
             </svg>
             <span className="text-xs font-medium">Analytics</span>
           </button>
         </div>
       </nav>
     </div>
-  )
+  );
 }
