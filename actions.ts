@@ -62,8 +62,6 @@ export async function loginAction({ identifier, password }: LoginInput) {
   return { success: true, message: "OTP sent successfully", otp }; // Do not expose OTP
 }
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
-
 interface Credential {
   email: string;
   phone: string;
