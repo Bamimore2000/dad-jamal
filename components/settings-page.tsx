@@ -16,7 +16,7 @@ interface SettingsPageProps {
   ) => void;
 }
 
-// Professional loading spinner component
+// Loading Spinner
 function LoadingOverlay() {
   return (
     <div className="fixed inset-0 bg-black/20 flex justify-center items-center z-50">
@@ -33,15 +33,16 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
 
   // Fetch user on mount
   useEffect(() => {
     const fetchUser = async () => {
-      const email = localStorage.getItem("identifier");
-      if (!email) return;
+      const identifier = localStorage.getItem("identifier");
+      if (!identifier) return;
       setLoading(true);
       try {
-        const data = await getUserByEmail(email);
+        const data = await getUserByEmail(identifier);
         const user = data.user!;
         setUserData(user);
 
@@ -49,6 +50,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
         setFirstName(user.firstName ?? "");
         setLastName(user.lastName ?? "");
         setPhone(user.phone ?? "");
+        setEmail(user.email ?? "");
       } catch (err) {
         console.error(err);
         toast.error("Failed to fetch user data");
@@ -60,17 +62,20 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
   }, []);
 
   const handleSave = async () => {
-    const email = localStorage.getItem("identifier");
-    if (!email) return;
+    const identifier = localStorage.getItem("identifier");
+    if (!identifier) return;
 
     setLoading(true);
     try {
-      const updated = await updateUserByEmail(email, {
+      const updated = await updateUserByEmail(identifier, {
         firstName,
         lastName,
         phone,
+        email,
       });
+
       setUserData(updated);
+      localStorage.setItem("identifier", email);
       toast.success("Settings updated successfully!");
     } catch (err) {
       console.error(err);
@@ -98,11 +103,13 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
         </div>
       </header>
 
+      {/* Main */}
       <main className="max-w-3xl mx-auto px-4 py-8 space-y-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Profile Information</CardTitle>
           </CardHeader>
+
           <CardContent className="space-y-4">
             {/* Editable fields */}
             <div>
@@ -112,6 +119,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </div>
+
             <div>
               <Label className="mb-1">Last Name</Label>
               <Input
@@ -119,16 +127,18 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
                 onChange={(e) => setLastName(e.target.value)}
               />
             </div>
+
             <div>
               <Label className="mb-1">Phone</Label>
               <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
 
-            {/* Read-only fields */}
             <div>
               <Label className="mb-1">Email</Label>
-              <Input value={userData?.email ?? ""} />
+              <Input value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
+
+            {/* Read-only fields */}
             <div>
               <Label className="mb-1">Account Number</Label>
               <Input value={userData?.accountNumber ?? ""} readOnly />
