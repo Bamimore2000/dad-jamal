@@ -50,12 +50,36 @@ const mockSpendingData = [
 ];
 
 const mockCategoryData = [
-  { name: "Luxury Travel", value: 72000, color: "#10B981" }, // Green
-  { name: "Fine Dining", value: 42000, color: "#3B82F6" }, // Blue
-  { name: "Entertainment", value: 35000, color: "#8B5CF6" }, // Purple
-  { name: "Real Estate & Utilities", value: 25000, color: "#F59E0B" }, // Amber
-  { name: "Charity & Donations", value: 18000, color: "#EF4444" }, // Red
-  { name: "Personal Staff", value: 30000, color: "#EC4899" }, // Pink
+  {
+    name: "Real Estate Acquisitions",
+    value: 1250000,
+    color: "#1A5DAD", // Pinnacle Blue – premium, trusted
+  },
+  {
+    name: "SaaS",
+    value: 980000,
+    color: "#10B981", // Emerald – growth, innovation
+  },
+  {
+    name: "Asset Management",
+    value: 620000,
+    color: "#8B5CF6", // Amethyst – exclusivity
+  },
+  {
+    name: "Academic Engagements",
+    value: 380000,
+    color: "#F59E0B", // Gold – prestige, influence
+  },
+  {
+    name: "Philanthropy",
+    value: 450000,
+    color: "#EF4444", // Crimson – purpose, legacy
+  },
+  {
+    name: "Private Office ",
+    value: 290000,
+    color: "#EC4899", // Rose – refined support
+  },
 ];
 
 export default function DashboardPage({
@@ -89,8 +113,6 @@ export default function DashboardPage({
       status: "active",
     },
   ];
-
-  console.log("User Data in DashboardPage:", data);
 
   const [selectedTransaction, setSelectedTransaction] = useState<
     (typeof mockTransactions)[0] | null
@@ -400,7 +422,7 @@ export default function DashboardPage({
                         {category.name}
                       </span>
                       <span className="text-sm font-semibold text-foreground ml-4">
-                        ${category.value}
+                        ${category.value.toLocaleString()}
                       </span>
                     </div>
                   ))}
