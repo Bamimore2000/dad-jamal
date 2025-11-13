@@ -132,13 +132,14 @@ export async function resetPasswordAction({
 }
 
 export async function getUserByEmail(email: string) {
+  const lowerEmail = email.toLocaleLowerCase();
   try {
     if (!email || typeof email !== "string") {
       throw new Error("Invalid email provided.");
     }
 
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: lowerEmail },
     });
 
     if (!user) {
