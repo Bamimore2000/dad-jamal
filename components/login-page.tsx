@@ -13,9 +13,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import { loginAction } from "@/actions";
+import { getUserByEmail, loginAction } from "@/actions";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useAppContext } from "@/app/context/appcontext";
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -28,6 +29,7 @@ export default function LoginPage({
 }: LoginPageProps) {
   const [identifier, setIdentifier] = useState(""); // email or phone
   const [password, setPassword] = useState("");
+  const { setUserData } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,6 +50,9 @@ export default function LoginPage({
         setIsLoading(false);
         return;
       }
+      const user = await getUserByEmail(identifier);
+      console.log({ user });
+      setUserData(user?.user);
 
       // Store OTP in localStorage
       localStorage.setItem("otp", res.otp!);
