@@ -51,7 +51,8 @@ export default function LoginPage({
         return;
       }
       const user = await getUserByEmail(identifier);
-      console.log({ user });
+      console.log({ identifier });
+      console.log({ user, identifier });
       setUserData(user?.user);
 
       // Store OTP in localStorage
