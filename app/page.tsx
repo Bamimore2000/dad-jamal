@@ -50,9 +50,7 @@ function HomeContent() {
   // Render pages based on currentPage
   switch (currentPage) {
     case "transfers":
-      return (
-        <TransfersPage onLogout={handleLogout} onNavigate={setCurrentPage} />
-      );
+      return <TransfersPage />;
     case "invest":
       return <InvestPage onLogout={handleLogout} onNavigate={setCurrentPage} />;
     case "analytics":

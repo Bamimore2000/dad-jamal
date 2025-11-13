@@ -41,7 +41,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Fetch user when authenticated
   useEffect(() => {
     const fetchUser = async () => {
-      if (authStep !== "authenticated") return;
+      // if (authStep !== "authenticated") return;
       const email = localStorage.getItem("identifier");
       if (!email) return;
 
