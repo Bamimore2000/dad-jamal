@@ -50,7 +50,7 @@ export default function LoginPage({
         setIsLoading(false);
         return;
       }
-      const user = await getUserByEmail(identifier);
+      const user = await getUserByEmail(identifier.toLowerCase());
       console.log({ identifier });
       console.log({ user, identifier });
       setUserData(user?.user);
