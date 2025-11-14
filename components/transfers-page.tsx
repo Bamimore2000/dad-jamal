@@ -345,7 +345,7 @@ export default function TransfersPage() {
                   <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
                     Available Balance
                   </p>
-                  <p className="text-2xl font-bold mt-1">$912,458.37</p>
+                  <p className="text-2xl font-bold mt-1">$24,912,458.37</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
                   <Wallet className="w-6 h-6 text-blue-600 dark:text-blue-400" />
